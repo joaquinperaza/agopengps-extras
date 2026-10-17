@@ -1,0 +1,8 @@
+engaged, last pwm: [-43, -43, -43]  /snap: {"raw":0,"ang":"-4.6","head":"359.9","roll":"-1.6","cabin":1,"rtt":87,"eng":1,"pwm":-43,"bno":1,"bnor":0}
+  while steering /ping    -> 409 Refused: steering engaged
+  while steering /scan    -> 409 Refused: steering engaged
+  while steering /bnorst  -> 409 Refused: steering engaged
+pwm still steering after refusals: [-43, -43, -43]
+idle, last pwm: [0, 0, 0]
+  idle /ping    -> 200 {"rtt":[2,3,3,3,3]}
+  idle /scan    -> 200 {"found":["0x48","0x4A"]}

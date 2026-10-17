@@ -1,0 +1,35 @@
+baseline idle (status 0)           spd=0    st=0 sp=0       ang=-4.61 err=-4.61 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=+0                     spd=5    st=1 sp=-4.6    ang=-4.62 err=-0.02 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=+0.5                   spd=5    st=1 sp=-4.1    ang=-4.62 err=-0.52 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=+1.2                   spd=5    st=1 sp=-3.4    ang=-4.61 err=-1.21 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=+2                     spd=5    st=1 sp=-2.6    ang=-4.61 err=-2.01 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=+3                     spd=5    st=1 sp=-1.6    ang=-4.61 err=-3.01 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=+4                     spd=5    st=1 sp=-0.6    ang=-4.62 err=-4.02 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=+5                     spd=5    st=1 sp=0.4     ang=-4.62 err=-5.02 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=+8                     spd=5    st=1 sp=3.4     ang=-4.61 err=-8.01 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=+15                    spd=5    st=1 sp=10.4    ang=-4.61 err=-15.01 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=+30                    spd=5    st=1 sp=25.4    ang=-4.61 err=-30.01 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=-0.5                   spd=5    st=1 sp=-5.1    ang=-4.62 err=0.48 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=-1.2                   spd=5    st=1 sp=-5.8    ang=-4.61 err=1.19 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=-2                     spd=5    st=1 sp=-6.6    ang=-4.61 err=1.99 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=-3                     spd=5    st=1 sp=-7.6    ang=-4.6 err=3.0 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=-5                     spd=5    st=1 sp=-9.6    ang=-4.62 err=4.98 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+engaged err=-15                    spd=5    st=1 sp=-19.6   ang=-4.62 err=14.98 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+speed 0, status 1, err +5          spd=0    st=1 sp=0.40000000000000036 ang=-4.61 err=-5.01 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+speed 0.5, status 1, err +5        spd=0.5  st=1 sp=0.40000000000000036 ang=-4.61 err=-5.01 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+speed 1.0, status 1, err +5        spd=1.0  st=1 sp=0.40000000000000036 ang=-4.61 err=-5.01 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+status 0, err +5                   spd=5    st=0 sp=0.40000000000000036 ang=-4.6 err=-5.0 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+re-engage err +5                   spd=5    st=1 sp=0.40000000000000036 ang=-4.62 err=-5.02 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+setpoint 70 (beyond maxSteer 50)   spd=5    st=1 sp=70      ang=-4.61 err=-74.61 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=0 snap_pwm=0
+re-engage err +5 (before timeout test) spd=5    st=1 sp=0.40000000000000036 ang=-4.61 err=-5.01 pgn253_pwm=[0, 0, 0, 0, 0] sw=['0x2'] snap_eng=None snap_pwm=None
+  no PGN254 t+ 0.20s sw=0x02 pwm=0
+  no PGN254 t+ 0.50s sw=0x02 pwm=0
+  no PGN254 t+ 0.80s sw=0x02 pwm=0
+  no PGN254 t+ 1.20s sw=0x02 pwm=0
+  no PGN254 t+ 1.50s sw=0x02 pwm=0
+  no PGN254 t+ 1.80s sw=0x02 pwm=0
+  no PGN254 t+ 2.30s sw=0x02 pwm=0
+  no PGN254 t+ 2.50s sw=0x02 pwm=0
+  no PGN254 t+ 2.80s sw=0x02 pwm=0
+after silence snap: {'raw': 11878, 'ang': '-4.6', 'head': '360.0', 'roll': '-0.9', 'cabin': 0, 'rtt': -1, 'eng': 0, 'pwm': 0, 'bno': 1, 'bnor': 0}
+final idle snap: {'raw': 11878, 'ang': '-4.6', 'head': '360.0', 'roll': '-0.9', 'cabin': 0, 'rtt': -1, 'eng': 0, 'pwm': 0, 'bno': 1, 'bnor': 0}

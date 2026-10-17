@@ -1,0 +1,90 @@
+CMD rate: 14 frames, avg dt 110.1 ms, idle pwm=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+idle status 0                        spd=5    st=0 sp=0.40    cmd_pwm=[0, 0, 0, 0, 0, 0]
+engaged err=+0                       spd=5    st=1 sp=-4.60   cmd_pwm=[0, 0, 0, 0, 0, 0]
+engaged err=+0.5                     spd=5    st=1 sp=-4.10   cmd_pwm=[0, 0, 0, 0, 0, 0]
+engaged err=+0.9                     spd=5    st=1 sp=-3.70   cmd_pwm=[0, 0, 0, 0, 0, 0]
+engaged err=+1.1                     spd=5    st=1 sp=-3.50   cmd_pwm=[0, 0, 0, 0, 0, 0]
+engaged err=+1.5                     spd=5    st=1 sp=-3.10   cmd_pwm=[0, 0, 0, 0, 0, 0]
+engaged err=+2                       spd=5    st=1 sp=-2.60   cmd_pwm=[-41, -41, -41, -41, -41, -41]
+engaged err=+3                       spd=5    st=1 sp=-1.60   cmd_pwm=[-41, -41, -41, -41, -41, -41]
+engaged err=+4                       spd=5    st=1 sp=-0.60   cmd_pwm=[-42, -42, -42, -42, -42, -42]
+engaged err=+5                       spd=5    st=1 sp=0.40    cmd_pwm=[-43, -43, -43, -43, -43, -43]
+engaged err=+6                       spd=5    st=1 sp=1.40    cmd_pwm=[-43, -43, -43, -43, -43, -43]
+engaged err=+8                       spd=5    st=1 sp=3.40    cmd_pwm=[-44, -44, -44, -44, -44, -44]
+engaged err=+15                      spd=5    st=1 sp=10.40   cmd_pwm=[-48, -49, -49, -49, -49, -49]
+engaged err=+30                      spd=5    st=1 sp=25.40   cmd_pwm=[-58, -58, -58, -58, -58, -58]
+engaged err=-0.5                     spd=5    st=1 sp=-5.10   cmd_pwm=[0, 0, 0, 0, 0, 0]
+engaged err=-1.5                     spd=5    st=1 sp=-6.10   cmd_pwm=[0, 0, 0, 0, 0, 0]
+engaged err=-3                       spd=5    st=1 sp=-7.60   cmd_pwm=[41, 41, 41, 41, 41, 41]
+engaged err=-5                       spd=5    st=1 sp=-9.60   cmd_pwm=[43, 42, 42, 42, 43, 42]
+engaged err=-15                      spd=5    st=1 sp=-19.60  cmd_pwm=[48, 48, 48, 48, 48, 48]
+-- step response (Kd transient), every CMD shown --
+hold err 0                           spd=5    st=1 sp=-4.60   cmd_pwm=[0, 0, 0, 0, 0, 0]
+step to err +3                       spd=5    st=1 sp=-1.60   cmd_pwm=[-58, -41, -41, -41, -41, -41, -41, -41, -41, -41, -41, -41, -41, -41]
+step to err +8                       spd=5    st=1 sp=3.40    cmd_pwm=[-49, -44, -44, -44, -44, -44, -44, -44, -44, -44, -44, -44, -44]
+step back to err +3                  spd=5    st=1 sp=-1.60   cmd_pwm=[-44, 42, -41, -41, -41, -41, -41, -41, -41, -41, -41, -41, -41, -41]
+-- gating --
+speed 0 err +5                       spd=0    st=1 sp=0.40    cmd_pwm=[0, 0, 0, 0, 0, 0]
+speed 0.1 err +5                     spd=0.1  st=1 sp=0.40    cmd_pwm=[-43, -43, -43, -43, -43, -43]
+speed 0.5 err +5                     spd=0.5  st=1 sp=0.40    cmd_pwm=[-43, -42, -43, -43, -43, -42]
+speed 1.0 err +5                     spd=1.0  st=1 sp=0.40    cmd_pwm=[-43, -42, -43, -42, -43, -42]
+speed 2.0 err +5                     spd=2.0  st=1 sp=0.40    cmd_pwm=[-42, -43, -43, -43, -42, -43]
+status 0 err +5                      spd=5    st=0 sp=0.40    cmd_pwm=[0, 0, 0, 0, 0, 0]
+setpoint 70 (> maxSteer 50)          spd=5    st=1 sp=70.00   cmd_pwm=[-84, -84, -84, -84, -84, -84]
+setpoint -70                         spd=5    st=1 sp=-70.00  cmd_pwm=[79, 79, 79, 79, 79, 79]
+-- AOG goes silent while engaged (err +5) --
+engage err +5                        spd=5    st=1 sp=0.40    cmd_pwm=[-42, -43, -42, -43, -42, -43]
+  no PGN254 t+ 0.12s pwm=-42
+  no PGN254 t+ 0.16s pwm=-43
+  no PGN254 t+ 0.33s pwm=-42
+  no PGN254 t+ 0.38s pwm=0
+  no PGN254 t+ 0.49s pwm=0
+  no PGN254 t+ 0.64s pwm=0
+  no PGN254 t+ 0.71s pwm=0
+  no PGN254 t+ 0.84s pwm=0
+  no PGN254 t+ 0.93s pwm=0
+  no PGN254 t+ 1.15s pwm=0
+  no PGN254 t+ 1.15s pwm=0
+  no PGN254 t+ 1.35s pwm=0
+  no PGN254 t+ 1.37s pwm=0
+  no PGN254 t+ 1.48s pwm=0
+  no PGN254 t+ 1.59s pwm=0
+  no PGN254 t+ 1.70s pwm=0
+  no PGN254 t+ 1.86s pwm=0
+  no PGN254 t+ 1.92s pwm=0
+  no PGN254 t+ 2.03s pwm=0
+  no PGN254 t+ 2.17s pwm=0
+  no PGN254 t+ 2.25s pwm=0
+  no PGN254 t+ 2.36s pwm=0
+  no PGN254 t+ 2.47s pwm=0
+  no PGN254 t+ 2.59s pwm=0
+  no PGN254 t+ 2.69s pwm=0
+  no PGN254 t+ 2.82s pwm=0
+  no PGN254 t+ 2.91s pwm=0
+-- cabin stops ACKing while engaged (err +5) --
+engage err +5                        spd=5    st=1 sp=0.40    cmd_pwm=[-43, -43, -43, -43, -43, -43]
+  no ACK t+ 0.06s pwm=-42
+  no ACK t+ 0.17s pwm=-43
+  no ACK t+ 0.28s pwm=0
+  no ACK t+ 0.39s pwm=0
+  no ACK t+ 0.50s pwm=0
+  no ACK t+ 0.61s pwm=0
+  no ACK t+ 0.72s pwm=0
+  no ACK t+ 0.83s pwm=0
+  no ACK t+ 0.94s pwm=0
+  no ACK t+ 1.05s pwm=0
+  no ACK t+ 1.16s pwm=0
+  no ACK t+ 1.27s pwm=0
+  no ACK t+ 1.40s pwm=0
+  no ACK t+ 1.50s pwm=0
+  no ACK t+ 1.60s pwm=0
+  no ACK t+ 1.71s pwm=0
+  no ACK t+ 1.84s pwm=0
+  no ACK t+ 1.93s pwm=0
+  no ACK t+ 2.04s pwm=0
+  no ACK t+ 2.15s pwm=0
+  no ACK t+ 2.26s pwm=0
+  no ACK t+ 2.37s pwm=0
+  no ACK t+ 2.48s pwm=0
+ACKs resume, err +5                  spd=5    st=1 sp=0.40    cmd_pwm=[0, -47, -43, -42, -43, -43, -43, -42, -43, -43, -43, -43, -43, -43, -43, -43, -43, -43]
+final idle pwm: [0, 0, 0, 0]

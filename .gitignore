@@ -1,0 +1,4 @@
+# Arduino IDE "Export compiled binary" output
+build/
+# Python bytecode from tools/
+__pycache__/

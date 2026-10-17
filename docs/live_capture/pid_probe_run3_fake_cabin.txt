@@ -1,0 +1,34 @@
+WAS = -4.6
+== A: int-truncation threshold (steady state, Kp=0.6 -> 1/0.6 = 1.667) ==
+E=3                                          sp=-7.60   cmd=[44, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41] pgn253 sw=['0x0'] pwmDisp=[41, 41, 41, 41]
+E=1.9                                        sp=-6.50   cmd=[0, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41] pgn253 sw=['0x0'] pwmDisp=[41, 41, 41, 41]
+E=1.8                                        sp=-6.40   cmd=[0, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41] pgn253 sw=['0x0'] pwmDisp=[41, 41, 41, 41]
+E=1.7                                        sp=-6.30   cmd=[41, 0, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41] pgn253 sw=['0x0'] pwmDisp=[41, 41, 41, 41]
+E=1.6                                        sp=-6.20   cmd=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] pgn253 sw=['0x0'] pwmDisp=[0, 0, 0, 0]
+E=1.5                                        sp=-6.10   cmd=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] pgn253 sw=['0x0'] pwmDisp=[0, 0, 0, 0]
+== B: deadzone early-return keeps prevError? ==
+disengage (status 0)                         sp=-4.60   cmd=[0, 0, 0, 0, 0, 0, 0, 0, 0] pgn253 sw=['0x0'] pwmDisp=[0, 0, 0, 0]
+E=-5 hold                                    sp=0.40    cmd=[-47, -43, -43, -42, -43, -43, -43, -43, -43, -43, -43, -43, -43] pgn253 sw=['0x0'] pwmDisp=[43, 43, 43, 43]
+E=+0.5 hold (inside dz)                      sp=-5.10   cmd=[-43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] pgn253 sw=['0x0'] pwmDisp=[0, 0, 0, 0]
+E=+1.2 (outside dz) first tick tells         sp=-5.80   cmd=[46, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] pgn253 sw=['0x0'] pwmDisp=[0, 0, 0, 0]
+E=+0.9 hold (inside dz=1.0?)                 sp=-5.50   cmd=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] pgn253 sw=['0x0'] pwmDisp=[0, 0, 0, 0]
+E=-5 hold                                    sp=0.40    cmd=[-48, -43, -42, -43, -42, -43, -43, -43, -42, -43, -43, -43, -43] pgn253 sw=['0x0'] pwmDisp=[43, 43, 43, 43]
+E=+1.05 just outside dz                      sp=-5.65   cmd=[46, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] pgn253 sw=['0x0'] pwmDisp=[0, 0, 0, 0]
+== C: AOG-silence timeout x3 ==
+engage E=-5                                  sp=0.40    cmd=[-48, -43, -43, -43, -43, -43, -43, -43, -43, -43, -43] pgn253 sw=['0x0'] pwmDisp=[43, 43, 43, 43]
+  silence#0: last nonzero CMD at +0.357s, first zero at +0.472s
+engage E=-5                                  sp=0.40    cmd=[-47, -42, -43, -42, -43, -42, -43, -42, -43, -42, -43] pgn253 sw=['0x0'] pwmDisp=[42, 43, 42, 43]
+  silence#1: last nonzero CMD at +0.441s, first zero at +0.489s
+engage E=-5                                  sp=0.40    cmd=[-47, -42, -43, -42, -43, -43, -43, -43, -43, -43, -43] pgn253 sw=['0x0'] pwmDisp=[43, 43, 43, 43]
+  silence#2: last nonzero CMD at +0.496s, first zero at +0.505s
+== D: heartbeat-loss timeout x3 ==
+engage E=-5                                  sp=0.40    cmd=[-47, -43, -43, -43, -43, -43, -43, -43, -43, -43, -43] pgn253 sw=['0x0'] pwmDisp=[43, 43, 43, 43]
+  noack#0: last nonzero CMD at +0.221s, first zero at +0.33s
+  resume                                     sp=0.40    cmd=[0, -47, -42, -43, -43, -43, -42, -43, -42] pgn253 sw=['0x0', '0x2'] pwmDisp=[43, 42, 43, 42]
+engage E=-5                                  sp=0.40    cmd=[-43, -42, -43, -42, -43, -42, -43, -42, -43, -42, -43] pgn253 sw=['0x0'] pwmDisp=[42, 43, 42, 43]
+  noack#1: last nonzero CMD at +0.218s, first zero at +0.328s
+  resume                                     sp=0.40    cmd=[0, -47, -43, -43, -43, -43, -43, -43, -43] pgn253 sw=['0x0', '0x2'] pwmDisp=[43, 43, 43, 43]
+engage E=-5                                  sp=0.40    cmd=[-43, -43, -43, -43, -43, -43, -43, -43, -43, -43, -43] pgn253 sw=['0x0'] pwmDisp=[43, 43, 43, 43]
+  noack#2: last nonzero CMD at +0.216s, first zero at +0.325s
+  resume                                     sp=0.40    cmd=[0, -47, -43, -42, -43, -43, -43, -43, -43] pgn253 sw=['0x0', '0x2'] pwmDisp=[43, 43, 43, 43]
+final idle cmd: [0, 0, 0, 0]  pgn253 sw: ['0x0', '0x0', '0x0']
