@@ -44,7 +44,7 @@ maxSteer 50°, counts/deg 210, WAS zero 12848, Ackerman 90 %, motor dir normal.
 | AOG timeout | pwm → 0 about 450–500 ms after the last AOG packet |
 | Cabin timeout | pwm → 0 between 220 and 330 ms after the last ACK (3/3 runs) |
 | switchByte | `0x00` while the cabin heartbeat is alive, `0x02` (steer switch "off") while it is not |
-| Low/high PWM ramp | never reached in the probes, so it is implemented as described in the UI text ("ramps from low to high over 5 degrees") |
+| Low/high PWM ramp | `limit = lowPWM + (highPWM − lowPWM)·|err|/5°`, highPWM from 5° up. Confirmed in run 6 (`pid_probe_run6_ramp.txt`): kicks at ±1.2° were capped at ±71 (no ramp would give ±109, a 3° ramp ±86), and a +65°→−75° jump was capped at −140 (uncapped −212) |
 | Ki | 0 on the live module, so the integral term is untested (anti-windup added) |
 
 A hysteresis hypothesis (based on one odd sample in run 2) was tested in run 4 and **falsified**.
@@ -89,6 +89,25 @@ The first flash erased the whole chip.
 | Hello-only (`bench_hello_probe.txt`) | pwm → 0 at 0.46 s (gold kept steering) ✓ |
 | `/ping` `/scan` `/bnorst` while steering (`bench_web_guard.txt`) | 409 refused, steering uninterrupted. Idle: ping 2–3 ms, scan OK |
 | "Zero WAS now" (`/zero`) | wz 969 → current raw (0), angle → 0.0° in `/snap` and PGN 253, survives reboot. Only tested with raw = 0 (jumper); a pot would test a non-zero raw |
+
+Ramp/cap probe on the bench (`bench_ramp_probe.txt`): the same ±71 kicks and the −140 cap as the gold.
+
+### Latency and stability, gold vs backup (`compare_gold_vs_bench.txt`)
+Both nodes were tested at the same time on the same WiFi, each with its own fake cabin: 60 s idle,
+then 180 s of steering with the setpoint flipping ±5° every second.
+
+| Measure | Gold | Backup |
+|---|---|---|
+| Setpoint → motor latency, mean / p95 | 70.8 / 120 ms | 70.3 / 120 ms |
+| Motor command interval, mean / p95 | 110.1 / 115 ms | 110.2 / 116 ms |
+| Lost motor frames / unexpected pwm=0 while steering | 1 / 0 | 2 / 0 |
+| Hello → reply, mean / p95 | 14.8 / 40 ms | 5.1 / 9.5 ms |
+| ICMP ping, mean | 12.8 ms | 12.3 ms |
+| IMU roll noise at rest (std) | 0.033° | 0.024° |
+
+Broadcast frames (PGN 253, hello replies) showed losses and gaps on both nodes equally. That is
+WiFi broadcast delivery to this laptop (no retries), not the firmware.
+Latency is dominated by the fixed 110 ms PID tick, on purpose: it matches the gold.
 
 Flashing note (S3 native USB): after an upload the board can stay in the ROM bootloader
 (USB ID `303a:1001`). `esptool --before no-reset --after watchdog-reset read-mac` starts the app.

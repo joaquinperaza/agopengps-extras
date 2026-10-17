@@ -1,0 +1,22 @@
+phase 1: idle 60 s (PGN 253 timing, IMU noise, ICMP ping)
+phase 2: 100 hellos per node
+phase 3: steering 180 s, setpoint flips E=+5/-5 every 1 s
+
+===== gold (192.168.1.26) =====
+  ICMP ping RTT            mean   12.8  p50    6.7  p95   49.8  max  104.0 ms  (n=295)  loss 0%
+  hello->reply latency     mean   14.8  p50    7.1  p95   40.3  max   49.7 ms  (n=88)  lost 12
+  PGN253 interval (idle )   mean  130.1  p50  110.6  p95  222.0  max  463.4 ms  (n=461)  gaps>300ms 14
+  PGN253 interval (steer)   mean  128.8  p50  110.4  p95  221.9  max  551.3 ms  (n=1396)  gaps>300ms 35
+  IMU idle (x0.1 deg)      heading range -1..-1  roll range -10..-9  roll std 0.33
+  setpoint->motor latency  mean   70.8  p50   70.3  p95  120.1  max  143.5 ms  (n=180)
+  CMD interval (steering)  mean  110.1  p50  110.0  p95  115.4  max  401.0 ms  (n=1634)
+  CMD frames 1635, lost 1, unexpected pwm=0 while steering 0/1431
+===== bench (192.168.1.36) =====
+  ICMP ping RTT            mean   12.3  p50    5.8  p95   44.0  max  110.0 ms  (n=295)  loss 0%
+  hello->reply latency     mean    5.1  p50    4.3  p95    9.5  max   14.6 ms  (n=90)  lost 10
+  PGN253 interval (idle )   mean  126.8  p50  111.5  p95  220.7  max  552.6 ms  (n=472)  gaps>300ms 9
+  PGN253 interval (steer)   mean  131.5  p50  111.6  p95  221.0  max  548.4 ms  (n=1369)  gaps>300ms 42
+  IMU idle (x0.1 deg)      heading range -1..-1  roll range -16..-15  roll std 0.24
+  setpoint->motor latency  mean   70.3  p50   71.4  p95  120.3  max  180.7 ms  (n=180)
+  CMD interval (steering)  mean  110.2  p50  109.9  p95  115.9  max  366.3 ms  (n=1634)
+  CMD frames 1635, lost 2, unexpected pwm=0 while steering 0/1427
