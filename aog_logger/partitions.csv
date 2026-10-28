@@ -1,0 +1,6 @@
+# ESP32-C3 Super Mini (4 MB flash): 1.5 MB app, ~2.4 MB rolling traffic log ("tlog", 624 sectors).
+# Name,   Type, SubType, Offset,   Size,
+nvs,      data, nvs,     0x9000,   0x5000,
+otadata,  data, ota,     0xe000,   0x2000,
+app0,     app,  ota_0,   0x10000,  0x180000,
+tlog,     data, 0x40,    0x190000, 0x270000,
