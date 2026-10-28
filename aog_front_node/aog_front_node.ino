@@ -53,21 +53,33 @@ struct Config {
   float    deadZone;
   float    ki;
   float    kd;
+  uint16_t webMinutes;                     // WebUI closes this long after joining WiFi (0 = never)
 };
+
+// Layout before webMinutes was added (the gold module's firmware). Used to migrate saved settings.
+struct ConfigV1 {
+  uint32_t magic; char ssid[33]; char pass[64]; uint8_t ip[4]; bool useDhcp; int16_t wasZero;
+  float countsPerDegree; float ackermanFix; uint8_t maxSteerAngle; bool wasDifferential;
+  bool invertWas; bool imuEnable; uint8_t cabinIp[4]; float kp; uint8_t highPWM; uint8_t lowPWM;
+  uint8_t minPWM; uint8_t motorDriveDir; float deadZone; float ki; float kd;
+};
+static_assert(offsetof(Config, webMinutes) >= sizeof(ConfigV1), "Config must extend ConfigV1");
 
 #define CFG_MAGIC 0xA6F70007UL
 Config cfg;
 Preferences prefs;
 
-// First-boot addresses (only used when NVS has no config). Overridable at build time so a
-// bench board never comes up on the tractor module's addresses, e.g.
+// First-boot values (only used when NVS has no config) = the gold tractor module's settings
+// (docs/live_capture/cfg.json). Addresses are overridable at build time so a bench board never
+// comes up on the tractor module's addresses, e.g.
 //   -DDEFAULT_IP=192,168,1,36 -DDEFAULT_CABIN_IP=192,168,1,113
 #ifndef DEFAULT_IP
-#define DEFAULT_IP 192, 168, 0, 26
+#define DEFAULT_IP 192, 168, 1, 26
 #endif
 #ifndef DEFAULT_CABIN_IP
-#define DEFAULT_CABIN_IP 192, 168, 0, 27
+#define DEFAULT_CABIN_IP 192, 168, 1, 27
 #endif
+const uint16_t DEFAULT_WEB_MINUTES = 10;   // live module closed the WebUI 10 min after boot
 
 void setDefaults() {
   memset(&cfg, 0, sizeof(cfg));
@@ -77,19 +89,20 @@ void setDefaults() {
   const uint8_t defIp[4] = { DEFAULT_IP }, defCabin[4] = { DEFAULT_CABIN_IP };
   memcpy(cfg.ip, defIp, 4);
   cfg.useDhcp = false;
-  cfg.wasZero = 0;
-  cfg.countsPerDegree = 120.0f;
-  cfg.ackermanFix = 100.0f;
-  cfg.maxSteerAngle = 40;
+  cfg.wasZero = 12848;
+  cfg.countsPerDegree = 210.0f;
+  cfg.ackermanFix = 90.0f;
+  cfg.maxSteerAngle = 50;
   cfg.wasDifferential = true;
   cfg.invertWas = false;
   cfg.imuEnable = true;
   memcpy(cfg.cabinIp, defCabin, 4);
-  cfg.kp = 0.2f; cfg.highPWM = 20; cfg.lowPWM = 1; cfg.minPWM = 1;
+  cfg.kp = 0.60f; cfg.highPWM = 140; cfg.lowPWM = 50; cfg.minPWM = 40;
   cfg.motorDriveDir = 0;
   cfg.deadZone = 1.0f;
   cfg.ki = 0.0f;
-  cfg.kd = 0.1f;
+  cfg.kd = 0.10f;
+  cfg.webMinutes = DEFAULT_WEB_MINUTES;
 }
 
 void loadConfig() {
@@ -98,6 +111,17 @@ void loadConfig() {
   if (n == sizeof(Config)) {
     prefs.getBytes("cfg", &cfg, sizeof(Config));
     if (cfg.magic != CFG_MAGIC) setDefaults();
+  } else if (n == sizeof(ConfigV1)) {      // saved by the older firmware: keep it, add new fields
+    ConfigV1 old;
+    prefs.getBytes("cfg", &old, sizeof(old));
+    if (old.magic == CFG_MAGIC) {
+      memset(&cfg, 0, sizeof(cfg));
+      memcpy(&cfg, &old, sizeof(old));
+      cfg.webMinutes = DEFAULT_WEB_MINUTES;
+      Serial.println("Config migrated from older firmware");
+    } else {
+      setDefaults();
+    }
   } else {
     setDefaults();
   }
@@ -143,7 +167,13 @@ bool wasConvReady = false;                 // non-blocking ADS: conversion trigg
 
 WebServer server(80);
 bool webActive = true;
-const uint32_t WEB_TIMEOUT_MS = 600000UL;
+
+// WiFi: if the router isn't up at boot, run the config AP and keep retrying the router
+// (the stored WiFi can take ~10 min to come up). See serviceWifi().
+const uint32_t STA_BOOT_WAIT_MS = 12000;
+const uint32_t STA_RETRY_MS     = 30000;
+uint32_t staConnectedMs = 0;               // when the router was first joined; WebUI timer starts here
+uint32_t lastStaRetryMs = 0;
 
 // ---------------- Status LED ----------------
 uint32_t lastAogMs       = 0;
@@ -198,7 +228,9 @@ void webTask(void *param) {
   for (;;) {
     if (webActive) {
       server.handleClient();
-      if (!apMode && millis() > WEB_TIMEOUT_MS) {
+      // Always open in config-AP mode; otherwise close webMinutes after joining the router.
+      if (!apMode && cfg.webMinutes != 0 && staConnectedMs != 0 &&
+          millis() - staConnectedMs > cfg.webMinutes * 60000UL) {
         server.stop();
         webActive = false;
         Serial.println("WebUI stopped (config window elapsed)");
@@ -262,6 +294,9 @@ void loop() {
 
   static uint32_t lastLedMs = 0;
   if (now - lastLedMs >= 200) { lastLedMs = now; updateStatusLed(); }
+
+  static uint32_t lastWifiMs = 0;
+  if (now - lastWifiMs >= 500) { lastWifiMs = now; serviceWifi(); }
 
   // Handle I2C requests from web task (thread-safe: only main loop touches Wire1)
   if (reqScan) {
@@ -572,36 +607,69 @@ void applySteerConfig(const uint8_t *d) {
 void startWifi() {
   aogBroadcast = IPAddress(cfg.ip[0], cfg.ip[1], cfg.ip[2], 255);
 
-  if (strlen(cfg.ssid) == 0) { startConfigAp(); return; }
+  if (strlen(cfg.ssid) == 0) { startConfigAp(false); return; }
 
   WiFi.mode(WIFI_STA);
-  if (!cfg.useDhcp) {
-    IPAddress local(cfg.ip[0], cfg.ip[1], cfg.ip[2], cfg.ip[3]);
-    IPAddress gw(cfg.ip[0], cfg.ip[1], cfg.ip[2], 1);
-    IPAddress sn(255, 255, 255, 0);
-    WiFi.config(local, gw, sn);
-  }
+  configSta();
   WiFi.setSleep(false);
   WiFi.setAutoReconnect(true);
   WiFi.begin(cfg.ssid, cfg.pass);
   Serial.printf("WiFi -> %s", cfg.ssid);
   uint32_t t0 = millis();
-  while (WiFi.status() != WL_CONNECTED && millis() - t0 < 12000) {
+  while (WiFi.status() != WL_CONNECTED && millis() - t0 < STA_BOOT_WAIT_MS) {
     delay(300); Serial.print(".");
   }
   if (WiFi.status() == WL_CONNECTED) {
-    apMode = false;
-    Serial.printf("\nconnected: %s\n", WiFi.localIP().toString().c_str());
+    onStaConnected();
   } else {
-    Serial.println("\nSTA failed -> config AP");
-    startConfigAp();
+    Serial.println("\nrouter not up yet -> config AP, still retrying the router");
+    startConfigAp(true);
   }
 }
 
-void startConfigAp() {
+void configSta() {
+  if (cfg.useDhcp) return;
+  IPAddress local(cfg.ip[0], cfg.ip[1], cfg.ip[2], cfg.ip[3]);
+  IPAddress gw(cfg.ip[0], cfg.ip[1], cfg.ip[2], 1);
+  IPAddress sn(255, 255, 255, 0);
+  WiFi.config(local, gw, sn);
+}
+
+void onStaConnected() {
+  apMode = false;
+  if (staConnectedMs == 0) staConnectedMs = millis();
+  Serial.printf("\nconnected: %s\n", WiFi.localIP().toString().c_str());
+}
+
+// keepSta: keep the station side running so the router can still be joined later.
+void startConfigAp(bool keepSta) {
   apMode = true;
-  WiFi.mode(WIFI_AP);
+  WiFi.mode(keepSta ? WIFI_AP_STA : WIFI_AP);
   WiFi.softAP("AOG-FrontNode", "12345678");
+  if (keepSta) configSta();
+  lastStaRetryMs = millis();
   Serial.printf("Config AP: AOG-FrontNode / 12345678  http://%s\n",
                 WiFi.softAPIP().toString().c_str());
+}
+
+// Called from loop() every 500 ms.
+//  - config-AP mode: as soon as the router is joined, drop the AP and run normally.
+//  - not connected (boot without router, or router lost later): retry every STA_RETRY_MS.
+// While retrying, the station scans all channels, so a phone on the config AP may blip briefly.
+void serviceWifi() {
+  if (strlen(cfg.ssid) == 0) return;       // AP-only: nothing to join
+  if (WiFi.status() == WL_CONNECTED) {
+    if (apMode) {
+      WiFi.softAPdisconnect(true);         // back to plain station mode
+      onStaConnected();
+      Serial.println("router joined -> config AP closed");
+    }
+    return;
+  }
+  if (millis() - lastStaRetryMs >= STA_RETRY_MS) {
+    lastStaRetryMs = millis();
+    if (apMode) WiFi.begin(cfg.ssid, cfg.pass);
+    else        WiFi.reconnect();
+    Serial.println("WiFi: retrying router");
+  }
 }

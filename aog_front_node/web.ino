@@ -1,9 +1,10 @@
 /*
   WebUI: one page + JSON/text endpoints. Runs in webTask (aog_front_node.ino), which stops
-  serving WEB_TIMEOUT_MS after boot unless in AP mode.
+  serving cfg.webMinutes after the module joins the WiFi (never while in config-AP mode).
 
-  INDEX_HTML is byte-identical to the live module's page (docs/live_capture/index.html).
-  /cfg and /snap reproduce the live JSON field order and number formats.
+  INDEX_HTML is the live module's page (docs/live_capture/index.html) plus one field,
+  "WebUI open time (minutes)". /cfg and /snap keep the live JSON field order and number
+  formats; /cfg has one extra field at the end, "wto".
 
   The web task never touches Wire1 or the link socket: scan / BNO reset / ping are requested
   via flags and executed by loop(). Those three stall the control loop for up to ~1.3 s,
@@ -115,6 +116,9 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
  <label><input type=checkbox id=f_dhcp> Use DHCP</label>
  <label>Cabin motor node IP</label>
  <input type=text id=f_cip>
+ <label>WebUI open time (minutes)</label>
+ <p class=desc>The WebUI closes this many minutes after the module joins the WiFi. 0 = never close. It always stays open while the module is in setup-AP mode (AOG-FrontNode).</p>
+ <input type=number id=f_wto step=1 min=0 max=1440>
 </fieldset>
 
 <button type=submit>Save</button>
@@ -131,7 +135,7 @@ async function loadCfg(){
  E('f_kp').value=c.kp;E('f_ki').value=c.ki;E('f_kd').value=c.kd;E('f_hpwm').value=c.hpwm;E('f_lpwm').value=c.lpwm;
  E('f_mpwm').value=c.mpwm;E('f_mdir').checked=!!c.mdir;E('f_dz').value=c.dz;
  E('f_imu').checked=!!c.imu;E('f_ssid').value=c.ssid;
- E('f_ip').value=c.ip;E('f_cip').value=c.cip;E('f_dhcp').checked=!!c.dhcp;
+ E('f_ip').value=c.ip;E('f_cip').value=c.cip;E('f_dhcp').checked=!!c.dhcp;E('f_wto').value=c.wto;
  }catch(e){msg('Failed to load config',false);}
 }
 loadCfg();
@@ -145,6 +149,7 @@ function qs(){
  +'&pass='+encodeURIComponent(E('f_pass').value)
  +'&ip='+encodeURIComponent(E('f_ip').value)
  +'&cip='+encodeURIComponent(E('f_cip').value)
+ +'&wto='+E('f_wto').value
  +'&dhcp='+(E('f_dhcp').checked?1:0);
 }
 async function doSave(e){e.preventDefault();await fetch('/savecfg?'+qs());msg('Saved!',true);await loadCfg();return false;}
@@ -195,13 +200,13 @@ void handleCfg() {
   snprintf(buf, sizeof(buf),
     "{\"cpd\":%.0f,\"wz\":%d,\"ack\":%.0f,\"msa\":%u,\"diff\":%d,\"inv\":%d,"
     "\"kp\":%.2f,\"ki\":%.2f,\"kd\":%.2f,\"hpwm\":%u,\"lpwm\":%u,\"mpwm\":%u,\"mdir\":%u,\"dz\":%.1f,"
-    "\"ssid\":\"%s\",\"ip\":\"%u.%u.%u.%u\",\"cip\":\"%u.%u.%u.%u\",\"imu\":%d,\"dhcp\":%d}",
+    "\"ssid\":\"%s\",\"ip\":\"%u.%u.%u.%u\",\"cip\":\"%u.%u.%u.%u\",\"imu\":%d,\"dhcp\":%d,\"wto\":%u}",
     cfg.countsPerDegree, cfg.wasZero, cfg.ackermanFix, cfg.maxSteerAngle,
     cfg.wasDifferential ? 1 : 0, cfg.invertWas ? 1 : 0,
     cfg.kp, cfg.ki, cfg.kd, cfg.highPWM, cfg.lowPWM, cfg.minPWM, cfg.motorDriveDir, cfg.deadZone,
     cfg.ssid, cfg.ip[0], cfg.ip[1], cfg.ip[2], cfg.ip[3],
     cfg.cabinIp[0], cfg.cabinIp[1], cfg.cabinIp[2], cfg.cabinIp[3],
-    cfg.imuEnable ? 1 : 0, cfg.useDhcp ? 1 : 0);
+    cfg.imuEnable ? 1 : 0, cfg.useDhcp ? 1 : 0, cfg.webMinutes);
   server.send(200, "application/json", buf);
 }
 
@@ -229,6 +234,7 @@ void handleSaveCfg() {
   if (server.hasArg("ip"))   parseIp(server.arg("ip"), cfg.ip);
   if (server.hasArg("cip"))  parseIp(server.arg("cip"), cfg.cabinIp);
   if (server.hasArg("dhcp")) cfg.useDhcp = server.arg("dhcp") == "1";
+  if (server.hasArg("wto"))  { long v = server.arg("wto").toInt(); if (v >= 0 && v <= 1440) cfg.webMinutes = v; }
   saveConfig();
   server.send(200, "text/plain", "OK");
 }
