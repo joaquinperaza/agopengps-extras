@@ -2,3 +2,7 @@
 build/
 # Python bytecode from tools/
 __pycache__/
+# Compiled firmware images (rebuild from the sketch)
+firmware/*.bin
+# Local Claude Code session config
+.claude/
